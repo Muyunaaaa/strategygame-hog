@@ -1,2 +1,2 @@
 # strategygame-hog
-CS61A project 
+CS61A project 1
