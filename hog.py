@@ -145,7 +145,7 @@ def other(who):
 def silence(score0, score1):
     """Announce nothing (see Phase 2)."""
     return silence
-
+#封包
 
 def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
          goal=GOAL_SCORE, say=silence):
@@ -170,27 +170,22 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
     # 否则每次的strategy都是一样的，可实际上即使你获得了另外一次机会，也不一定会采取相同的策略
     while True:
         if who == 0:
-            nam_roils = strategy0(score0, score1)
-            score0 += take_turn(nam_roils, score1, dice)
-            say = say(score0, score1)
+            _num_rolls = strategy0(score0, score1)#对于玩家0，调用策略0获取投掷次数
+            #执行一次行动
+            score0 += take_turn(_num_rolls, score1, dice)
+            say = say(score0, score1)#评论
             if score0 >= goal or score1 >= goal:
                 break
-                # 之前上面是return，但底下有一个return，只能用break了
             if not extra_turn(score0, score1):
-                who = other(who)
+                who = other(who)#如果没有额外机会，交换玩家
         if who == 1:
-            nam_roils = strategy1(score1, score0)
-            score1 += take_turn(nam_roils, score0, dice)
+            _num_rolls = strategy1(score1, score0)
+            score1 += take_turn(_num_rolls, score0, dice)
             say = say(score0, score1)
             if score0 >= goal or score1 >= goal:
                 break
             if not extra_turn(score1, score0):
                 who = other(who)
-    # END PROBLEM 5
-    # (note that the indentation for the problem 6 prompt (***YOUR CODE HERE***) might be misleading)
-    # BEGIN PROBLEM 6
-    # problem6的代码写到了problem5中，就是say = say(score0, score1)那两句
-    # END PROBLEM 6
     return score0, score1
 
 
@@ -274,19 +269,18 @@ def announce_highest(who, last_score=0, running_high=0):
     assert who == 0 or who == 1, 'The who argument should indicate a player.'
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
-    # 这段代码不会，参考网上的往年cs61a hog做的，主要还是高阶函数不够熟悉
     def commentary(score0, score1, last_score=last_score, running_high=running_high):
         if who ==0:
             if score0-last_score>running_high:
                 print("{0} point(s)! The most yet for Player {1}".format(score0-last_score, who))
-                running_high=score0-last_score
-            return announce_highest(who, last_score=score0, running_high=running_high)
+                running_high=score0-last_score#更新最高分
+            return announce_highest(who, last_score=score0, running_high=running_high)#函数递归
         elif who ==1:
             if score1-last_score>running_high:
                 print("{0} point(s)! The most yet for Player {1}".format(score1-last_score, who))
                 running_high=score1-last_score
             return announce_highest(who, last_score=score1, running_high=running_high)
-    return commentary
+    return commentary #封包
     # END PROBLEM 7
 
 
@@ -329,7 +323,6 @@ def make_averaged(original_function, trials_count=1000):
     def new_func(*args):
         new, total = 0, 0
         # while new < trials_count:
-        # 不知道为什么上面的循环超时或者一些莫名其妙的错误，下面这个for循环可以pass
         for i in range(trials_count):
             total += original_function(*args)
             # new += 1
@@ -363,10 +356,10 @@ def max_scoring_num_rolls(dice=six_sided, trials_count=1000):
     num_of_dice = 10
     max_number_of_dice = 0
     while num_of_dice > 0:
-        current_rool = make_averaged(roll_dice, trials_count)(num_of_dice, dice)
+        current_rool = make_averaged(roll_dice, trials_count)(num_of_dice, dice)#使用内部的封包函数new_func
         if current_rool > max_roll:
             max_roll = current_rool
-            max_number_of_dice = num_of_dice
+            max_number_of_dice = num_of_dice#记录最大值
         num_of_dice -= 1
     return max_number_of_dice
     # END PROBLEM 9
@@ -418,7 +411,7 @@ def bacon_strategy(score, opponent_score, cutoff=8, num_rolls=6):
     """
     # BEGIN PROBLEM 10
     # 如果掷0所得的分数比cutoff大就return0，否则return  num_rolls
-    if free_bacon(opponent_score) >= cutoff:
+    if free_bacon(opponent_score) >= cutoff:#注意这里是>=
         return 0
     else:
         return num_rolls
@@ -436,7 +429,6 @@ def extra_turn_strategy(score, opponent_score, cutoff=8, num_rolls=6):
     score_all = score + score_add
     result = extra_turn(score_all, opponent_score)
     if (bacon_strategy(score=score, opponent_score=opponent_score, cutoff=cutoff, num_rolls=num_rolls) == 0) or result:
-        # 上面这个if语句第一项若不写==0会出错
         return 0
     else:
         return num_rolls
@@ -450,7 +442,7 @@ def final_strategy(score, opponent_score):
     *** YOUR DESCRIPTION HERE ***
     """
     # BEGIN PROBLEM 12
-    return 4 # Replace this statement
+    return 6 # Replace this statement
     # END PROBLEM 12
 ##########################
 # Command Line Interface #
